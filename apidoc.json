@@ -1,0 +1,10 @@
+{
+  "name": "Attachimp APIs",
+  "version": "0.0.1",
+  "description": "documentation of attachimp Api's",
+  "title": "Attachimp Api",
+  "url" : "",
+  "template": {
+    "forceLanguage": "en"
+  }
+}
