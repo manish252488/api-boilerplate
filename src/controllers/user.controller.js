@@ -3,7 +3,7 @@
  */
 import { ExtendableError } from '../services/error'
 import bcrypt from 'bcryptjs'
-import Joi, { date } from "joi";
+import Joi, { date, validate } from "joi";
 import User from "../models/user.model";
 import rbac from "../config/rbac";
 import jwt from "jsonwebtoken";
@@ -57,16 +57,26 @@ export async function create(req, res) {
   }
 }
 
-export async function login(req, res, next) {
+export async function login(req, res) {
+  let userProfile = req.body;
   try {
-    if (req.user.error) {
-      return res.error("User authorization failed", req.user.error);
-    } else {
-      return res.success("LOGIN SUCCESS", req.user.toAuthJSON());
-    }
+       let user = await User.find({
+        email: userProfile.email,
+    });
+    console.log(user)
+      if(user && user!==undefined && user.length > 0){
+        user=user[0];
+        if(user.authenticateUser(userProfile.password)){
+          return res.success("user authenticated!", user.toAuthJSON())
+        }else{
+          return res.error("wrong email or password!")
+        }
+      }else{
+      return res.error("user not found!");
+      }
+      
   } catch (e) {
-    console.error("error which authenticating admin", e);
-    return res.error("error which authenticating admin", e);
+    return res.error("error while authenticating", e);
   }
 }
 

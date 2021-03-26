@@ -16,21 +16,18 @@ var cors = require('cors');
 import axios from 'axios';
 import * as Sentry from '@sentry/node';
 import passport from 'passport';
+import constants from './config/constants';
 
 // import {ipMiddleware} from './config/middlewares'
 const app = express();
-Sentry.init({ dsn: 'https://230323beab50499fb652def9e801b1f8@o434161.ingest.sentry.io/5390726' });
 app.use(cors({ origin: true, credentials: true }));
-// Wrap all the middlewares with the server
 middlewaresConfig(app);
-// Add the apiRoutes stack to the server
-/* app.set('views', './src/views');
-app.set('view engine', 'pug'); */
-app.use(expressSession({
-  secret: 'supersecretsecret',
-  resave: false,
-  saveUnititialized: true
-}));
+app.use(require('serve-static')(__dirname + '/../../public'));
+app.use(require('cookie-parser')());
+app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(require('express-session')({ secret: constants.JWT_SECRET, resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/', ApiRoutes);
 
 

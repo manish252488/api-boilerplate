@@ -2,7 +2,7 @@
 
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
-import { hashSync, genSaltSync } from "bcrypt-nodejs";
+import { hashSync, genSaltSync, compareSync } from "bcrypt-nodejs";
 import jwt from "jsonwebtoken";
 import uniqueValidator from "mongoose-unique-validator";
 import constants from "../config/constants";
@@ -45,15 +45,15 @@ const UserSchema = new Schema(
       type: Number,
       max: 1,
       min: 0,
-      default: 1
+      default: 1,
     },
     createdDate: {
       type: Date,
-      default: new Date()
+      default: new Date(),
     },
     updatedDate: {
       type: Date,
-      default: new Date()
+      default: new Date(),
     },
     password: {
       type: String,
@@ -67,7 +67,7 @@ const UserSchema = new Schema(
     },
     lastLogin: {
       type: Date,
-      default: new Date()
+      default: new Date(),
     },
   },
   { timestamps: true }
@@ -129,10 +129,17 @@ UserSchema.methods = {
    */
   toAuthJSON() {
     return {
-      roleId: this.roleId === 0 ? "admin" : "user",
-      accessToken: `JWT ${this.createToken()}`,
-      name: this.name,
-      email: this.email,
+      user: {
+        roleId: this.roleId === 0 ? "admin" : "user",
+        name: this.name,
+        email: this.email,
+        picture: this.picture,
+        roleId:
+          this.roleId === 0 ? "guest" : this.roleId === 1 ? "user" : "admin",
+        status: this.status,
+        source: this.source || "none",
+      },
+      token: `JWT ${this.createToken()}`,
     };
   },
 
@@ -144,12 +151,16 @@ UserSchema.methods = {
    */
   toJSON() {
     return {
-      id: this._id,
-      name: this.name,
-      email: this.email,
-      roleId: this.roleId === 0 ? "guest" : this.roleId === 1 ? "user" : "admin",
-      status: this.status,
-      source: this.source || "none",
+       user: {
+        roleId: this.roleId === 0 ? "admin" : "user",
+        name: this.name,
+        email: this.email,
+        picture: this.picture,
+        roleId:
+          this.roleId === 0 ? "guest" : this.roleId === 1 ? "user" : "admin",
+        status: this.status,
+        source: this.source || "none",
+      }
     };
   },
 };

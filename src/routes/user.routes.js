@@ -53,7 +53,6 @@ const routes = new Router();
  */
 
 routes.post('/create',UserController.create)
-
-
+routes.post('/login',UserController.login)
 
 export default routes;
