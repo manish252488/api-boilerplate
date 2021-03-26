@@ -30,8 +30,6 @@ let splitted = movie_conversations.toString().split("\n");
       }
     });
 
-
-
  const dotProduct = (xs, ys) => {
           const sum = xs => xs ? xs.reduce((a, b) => a + b, 0) : undefined;
 
@@ -40,12 +38,19 @@ let splitted = movie_conversations.toString().split("\n");
             : undefined;
         }
 
-        // zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
  const zipWith =(f, xs, ys) => {
               const ny = ys.length;
               return (xs.length <= ny ? xs : xs.slice(0, ny))
                   .map((x, i) => f(x, ys[i]));
             }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 export async function chat(req,res){
     try{
