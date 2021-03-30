@@ -2,7 +2,7 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 import constants from "./constants";
 import User from "../models/user.model";
-import { ExtractJwt,Strategy as JwtStrategy } from "passport-jwt";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 
 export async function verifyApiKey(req, res, next) {
   try {
@@ -43,6 +43,10 @@ passport.use(
         if (!validate) {
           return done(null, false, { message: "Wrong Password" });
         }
+
+        if (user.status === 0) {
+          await User.findByIdAndUpdate(user.id, { status: 1 });
+        }
         // Send the user information to the next middleware
         return done(null, user, { message: "Logged in Successfully" });
       } catch (error) {
@@ -54,43 +58,46 @@ passport.use(
 
 passport.use(
   "admin",
-  new JwtStrategy({
-    secretOrKey: constants.JWT_SECRET,
-    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
-  },async (payload,done)=>{
-    try{
-    const user = await User.findById(payload.id);
-    if(!user){
-      return done(null,false, {message: "user not found/registered!"})
+  new JwtStrategy(
+    {
+      secretOrKey: constants.JWT_SECRET,
+      jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("JWT"),
+    },
+    async (payload, done) => {
+      try {
+        const user = await User.findById(payload.id);
+        if (!user) {
+          return done(null, false, { message: "user not found/registered!" });
+        }
+        if (user.roleId !== 2) {
+          return done(null, false, { message: "user is not an admin!" });
+        }
+        return done(null, user, { message: "user verified!" });
+      } catch (err) {
+        return done(error);
+      }
     }
-    if(user.roleId!==2){
-      return done(null,false, { message: "user is not an admin!"})
-    }
-    return done(null,user,{message: "user verified!"})
-    }catch(err){
-      return done(error)
-    }
-  })
+  )
 );
 passport.use(
   "checkJwt",
-  new JwtStrategy({
-    secretOrKey: constants.JWT_SECRET,
-    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
-  },async (payload,done)=>{
-    try{
-    const user = await User.findById(payload.id);
-    if(!user){
-      return done(null,false, {message: "user not found/registered!"})
+  new JwtStrategy(
+    {
+      secretOrKey: constants.JWT_SECRET,
+      jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("JWT"),
+    },
+    async (payload, done) => {
+      try {
+        const user = await User.findById(payload.id);
+        if (!user) {
+          return done(null, false, { message: "user not found/registered!" });
+        }
+        return done(null, user, { message: "user verified!" });
+      } catch (err) {
+        return done(error);
+      }
     }
-    if(user.roleId!==0){
-      return done(null,false, { message: "user is not an admin!"})
-    }
-    return done(null,user,{message: "user verified!"})
-    }catch(err){
-      return done(error)
-    }
-  })
+  )
 );
 passport.serializeUser(function(user, done) {
   done(null, user);

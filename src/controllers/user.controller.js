@@ -1,14 +1,8 @@
 /**
  * User controller
  */
-import { ExtendableError } from '../services/error'
-import bcrypt from 'bcryptjs'
-import Joi, { date, validate } from "joi";
+import Joi from "joi";
 import User from "../models/user.model";
-import rbac from "../config/rbac";
-import jwt from "jsonwebtoken";
-import constants from "../config/constants";
-import chalk from "chalk";
 
 export const validation = {
   login: {
@@ -28,7 +22,7 @@ export const validation = {
         .regex(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/),
       source: Joi.string(),
       picture: Joi.string(),
-      roleId: Joi.number()
+      roleId: Joi.number(),
     },
   },
 };
@@ -48,9 +42,13 @@ export async function create(req, res) {
     if (!user || user.length <= 0) {
       userObject = await User.create(userProfile);
       data.id = user.id;
-      return res.success("user created", userObject.toAuthJSON())
+      return res.success("user created", userObject.toAuthJSON());
     } else {
-     return res.error("user already exists!")
+      if (user[0].status === 0)
+        return res.error(
+          "email already exists.login to activate your account!"
+        );
+      else return res.error("user already exists!");
     }
   } catch (e) {
     return res.error("Error occurred while creating user", e);
@@ -59,21 +57,46 @@ export async function create(req, res) {
 
 export async function login(req, res) {
   try {
-     return res.success("user logged in!", req.user.toAuthJSON())
+    return res.success("user logged in!", req.user.toAuthJSON());
   } catch (e) {
     return res.error("error while authenticating", e);
   }
 }
 
-
-export async function listUsers(req,res){
-  try{
-    let data = await User.find({});
-    return res.success("users list", data)
-  }catch(err){
-    return res.error("error listing users", err)
+export async function listUsers(req, res) {
+  try {
+    let data = await User.find();
+    return res.success("users list", data);
+  } catch (err) {
+    return res.error("error listing users", err);
   }
 }
 
+export async function updateUser(req, res) {
+  try {
+    const user = req.user;
+    await User.updateOne({ _id: user.id }, { ...req.body });
+    const updated = await User.findById(user.id);
+    return res.success("user Updated!", updated);
+  } catch (err) {
+    return res.error("error updating user", err);
+  }
+}
 
-
+export async function deleteUser(req, res) {
+  try {
+    const user = req.user;
+    await User.findByIdAndUpdate(user.id, { status: 0 });
+    return res.success("user deactivated");
+  } catch (err) {
+    return res.error("cannot deactivate user", err);
+  }
+}
+export async function checkJwt(req,res){
+    try {
+    const user = req.user;
+    return res.success("user authorized", user.toObject());
+  } catch (err) {
+    return res.error("cannot authorize user", err);
+  }
+}

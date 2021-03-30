@@ -4,6 +4,7 @@
  * Configuration for the database
  */
 
+import chalk from 'chalk';
 import mongoose from 'mongoose';
 
 import constants from './constants';
@@ -16,14 +17,14 @@ mongoose.set('debug', process.env.MONGOOSE_DEBUG);
 mongoose.set('useCreateIndex',true);
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
-
+mongoose.set('useFindAndModify', false);
 try {
-  mongoose.connect(constants.MONGO_URL, { useNewUrlParser: true });
+  mongoose.connect(constants.MONGO_URL);
 } catch (err) {
-  mongoose.createConnection(constants.MONGO_URL, { useNewUrlParser: true });
+  mongoose.createConnection(constants.MONGO_URL);
 }
 mongoose.connection
-  .once('open', () => console.log('MongoDB Running'))
+  .once('open', () => console.log(chalk.green('MongoDB Running')))
   .on('error', e => {
     throw e;
   }); 

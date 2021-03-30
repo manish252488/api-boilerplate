@@ -54,5 +54,7 @@ const routes = new Router();
 routes.post('/create',[verifyApiKey],UserController.create)
 routes.post('/login',[verifyApiKey,passport.authenticate('login')], UserController.login)
 routes.get('/list', [verifyApiKey, passport.authenticate('admin',{session: false})], UserController.listUsers)
-
+routes.put('/update',[verifyApiKey,passport.authenticate('checkJwt',{session:false})], UserController.updateUser)
+routes.delete('/delete',[verifyApiKey, passport.authenticate('checkJwt',{session:false})], UserController.deleteUser)
+routes.get('/check',[verifyApiKey, passport.authenticate('checkJwt',{session:false})], UserController.checkJwt)
 export default routes;

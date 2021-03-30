@@ -77,18 +77,21 @@ UserSchema.plugin(uniqueValidator, {
   message: "{VALUE} already taken!",
 });
 // Hash the user password on creation
-UserSchema.pre("save", function(next) {
+UserSchema.pre("save", async function(next) {
   if (this.password && this.isModified("password")) {
     var salt = genSaltSync(12);
     this.password = hashSync(this.password, salt);
-    // this.password = (this.password);
   }
 
   next();
 });
-// UserSchema.methods.adminAuth = async function (inputPass , correctPass){
-//   return await bcrypt.compare(inputPass, correctPass);
-// }
+UserSchema.pre("updateOne", async function(next) {
+  if (this._update.password) {
+    var salt = genSaltSync(12);
+    this._update.password = hashSync(this._update.password, salt);
+  }
+  next();
+});
 
 UserSchema.methods = {
   async adminAuth(inputPass, correctPass) {
@@ -127,6 +130,7 @@ UserSchema.methods = {
   toAuthJSON() {
     return {
       user: {
+        id: this._id,
         roleId: this.roleId === 0 ? "admin" : "user",
         name: this.name,
         email: this.email,
@@ -139,16 +143,16 @@ UserSchema.methods = {
       token: `JWT ${this.createToken()}`,
     };
   },
-
   /**
    * Parse the user object in data we wanted to send
    *
    * @public
    * @returns {Object} User - ready for populate
    */
-  toJSON() {
+  toObject() {
     return {
-       user: {
+      user: {
+        id: this._id,
         roleId: this.roleId === 0 ? "admin" : "user",
         name: this.name,
         email: this.email,
@@ -157,7 +161,26 @@ UserSchema.methods = {
           this.roleId === 0 ? "guest" : this.roleId === 1 ? "user" : "admin",
         status: this.status,
         source: this.source || "none",
-      }
+        password: this.password,
+
+      },
+    };
+  },
+  toJSON() {
+    return {
+      id: this._id,
+      roleId: this.roleId === 0 ? "admin" : "user",
+      name: this.name,
+      email: this.email,
+      picture: this.picture,
+      roleId:
+        this.roleId === 0 ? "guest" : this.roleId === 1 ? "user" : "admin",
+      status: this.status,
+      source: this.source || "none",
+      createdDate: this.createdDate,
+      updatedDate: this.updatedDate,
+      lastLogin: this.lastLogin
+      
     };
   },
 };

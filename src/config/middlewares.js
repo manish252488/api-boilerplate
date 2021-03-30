@@ -4,7 +4,7 @@
 
 import morgan from "morgan";
 import compression from "compression";
-import passport from "passport";
+import passport from "../config/AuthMiddlewares";
 import expressWinston from "express-winston";
 import methodOverride from "method-override";
 import helmet from "helmet";
@@ -15,7 +15,7 @@ import bodyParser from "body-parser";
 import constants from "../config/constants";
 import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
-
+import chalk from 'chalk';
 import { Response } from '../models/response.model';
 const isTest = process.env.NODE_ENV === "test";
 const isDev = process.env.NODE_ENV === "development";
