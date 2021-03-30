@@ -19,8 +19,8 @@ app.use("/", ApiRoutes);
 let server;
 if (process.env.APP_ENV === 'production') {
   const options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/attachimp.com/privkey.pem', 'utf-8'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/attachimp.com/fullchain.pem', 'utf-8')
+    key: fs.readFileSync('/<location>/privkey.pem', 'utf-8'),
+    cert: fs.readFileSync('cert_location', 'utf-8')
   };
   server = https.createServer(options, app)
 } else {
