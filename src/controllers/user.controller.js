@@ -58,30 +58,22 @@ export async function create(req, res) {
 }
 
 export async function login(req, res) {
-  let userProfile = req.body;
   try {
-       let user = await User.find({
-        email: userProfile.email,
-    });
-    console.log(user)
-      if(user && user!==undefined && user.length > 0){
-        user=user[0];
-        if(user.authenticateUser(userProfile.password)){
-          return res.success("user authenticated!", user.toAuthJSON())
-        }else{
-          return res.error("wrong email or password!")
-        }
-      }else{
-      return res.error("user not found!");
-      }
-      
+     return res.success("user logged in!", req.user.toAuthJSON())
   } catch (e) {
     return res.error("error while authenticating", e);
   }
 }
 
 
-
+export async function listUsers(req,res){
+  try{
+    let data = await User.find({});
+    return res.success("users list", data)
+  }catch(err){
+    return res.error("error listing users", err)
+  }
+}
 
 
 

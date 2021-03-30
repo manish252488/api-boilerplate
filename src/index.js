@@ -15,7 +15,7 @@ import fs from 'fs';
 var cors = require('cors');
 import axios from 'axios';
 import * as Sentry from '@sentry/node';
-import passport from 'passport';
+import passport from './config/AuthMiddlewares';
 import constants from './config/constants';
 
 // import {ipMiddleware} from './config/middlewares'
@@ -25,7 +25,6 @@ middlewaresConfig(app);
 app.use(require('serve-static')(__dirname + '/../../public'));
 app.use(require('cookie-parser')());
 app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(require('express-session')({ secret: constants.JWT_SECRET, resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/', ApiRoutes);

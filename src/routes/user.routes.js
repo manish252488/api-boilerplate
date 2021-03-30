@@ -5,7 +5,7 @@ import { Router } from 'express';
 const UserController = require('../controllers/user.controller');
 import passport from 'passport'
 import validate from 'express-validation';
-
+import { verifyApiKey } from '../config/AuthMiddlewares';
 const routes = new Router();
 /**
  * @api {get} /users/:id Details of a user
@@ -52,7 +52,8 @@ const routes = new Router();
  * 
  */
 
-routes.post('/create',UserController.create)
-routes.post('/login',UserController.login)
+routes.post('/create',[verifyApiKey],UserController.create)
+routes.post('/login',[verifyApiKey,passport.authenticate('login')], UserController.login)
+routes.get('/list', [verifyApiKey, passport.authenticate('admin',{session: false})], UserController.listUsers)
 
 export default routes;

@@ -99,7 +99,6 @@ export async function chat(req,res){
     }else
     return res.status(405).send("could not understand!")
     }catch(err){
-        console.log(err)
         return res.send("error")
     }
 

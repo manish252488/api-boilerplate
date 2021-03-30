@@ -1,10 +1,14 @@
 import passport from "passport";
+import LocalStrategy from "passport-local";
+import constants from "./constants";
+import User from "../models/user.model";
+import { ExtractJwt,Strategy as JwtStrategy } from "passport-jwt";
 
-export async function verifyApikey(req, res, next) {
+export async function verifyApiKey(req, res, next) {
   try {
     let api_key = req.headers["x-api-key"];
     if (req.headers["x-api-key"]) {
-      if (api_key === "7777") next();
+      if (api_key === constants.API_KEY) next();
       else return res.error("api key wrong!");
     } else {
       return res.error("api key missing in headers!");
@@ -13,14 +17,87 @@ export async function verifyApikey(req, res, next) {
     return res.error("error verifying api key", err);
   }
 }
-export async function verifyToken(req, res, next) {
+
+passport.use(
+  "login",
+  // eslint-disable-next-line no-undef
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+    },
+    async (email, password, done) => {
+      try {
+        // Find the user associated with the email provided by the user
+        const user = await User.findOne({
+          // eslint-disable-next-line object-shorthand
+          email: email,
+        });
+        if (!user) {
+          // If the user isn't found in the database, return a message
+          return done(null, false, { message: "User not found" });
+        }
+
+        // If the passwords match, it returns a value of true.
+        const validate = await user.authenticateUser(password);
+        if (!validate) {
+          return done(null, false, { message: "Wrong Password" });
+        }
+        // Send the user information to the next middleware
+        return done(null, user, { message: "Logged in Successfully" });
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
+
+passport.use(
+  "admin",
+  new JwtStrategy({
+    secretOrKey: constants.JWT_SECRET,
+    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+  },async (payload,done)=>{
     try{
-        passport.deserializeUser(function(id, done) {
-         User.findById(id, function (err, user) {
-         done(err, user);
-  });
+    const user = await User.findById(payload.id);
+    if(!user){
+      return done(null,false, {message: "user not found/registered!"})
+    }
+    if(user.roleId!==2){
+      return done(null,false, { message: "user is not an admin!"})
+    }
+    return done(null,user,{message: "user verified!"})
+    }catch(err){
+      return done(error)
+    }
+  })
+);
+passport.use(
+  "checkJwt",
+  new JwtStrategy({
+    secretOrKey: constants.JWT_SECRET,
+    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+  },async (payload,done)=>{
+    try{
+    const user = await User.findById(payload.id);
+    if(!user){
+      return done(null,false, {message: "user not found/registered!"})
+    }
+    if(user.roleId!==0){
+      return done(null,false, { message: "user is not an admin!"})
+    }
+    return done(null,user,{message: "user verified!"})
+    }catch(err){
+      return done(error)
+    }
+  })
+);
+passport.serializeUser(function(user, done) {
+  done(null, user);
 });
-    }catch (err) {
-    return res.error("error authenticating token", err);
-  }
-}
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+export default passport;

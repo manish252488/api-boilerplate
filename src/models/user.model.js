@@ -76,10 +76,8 @@ const UserSchema = new Schema(
 UserSchema.plugin(uniqueValidator, {
   message: "{VALUE} already taken!",
 });
-
 // Hash the user password on creation
 UserSchema.pre("save", function(next) {
-  console.log(this.isModified("password"));
   if (this.password && this.isModified("password")) {
     var salt = genSaltSync(12);
     this.password = hashSync(this.password, salt);
@@ -118,7 +116,6 @@ UserSchema.methods = {
       { email: this.email, role: this.roleId, id: this._id },
       constants.JWT_SECRET
     );
-    console.log("token:", token);
     return token;
   },
   /**
