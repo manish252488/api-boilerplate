@@ -6,7 +6,7 @@ const Tokenizer = require("sentence-tokenizer");
 import path from 'path';
 import fs from 'fs';
 
-const movie_lines = fs.readFileSync(path.resolve('src/controllers/movie_lines.txt'))
+const movie_lines = fs.readFileSync(path.resolve('src/data/movie_lines.txt'))
 let lines = {};
 movie_lines.toString().split("\n").forEach((l) => {
       let parts = l.split(" +++$+++ ");
@@ -14,7 +14,7 @@ movie_lines.toString().split("\n").forEach((l) => {
 });
 let questions = [];
 let responses = [];
-let movie_conversations =fs.readFileSync(path.resolve('src/controllers/conversation.txt'))
+let movie_conversations =fs.readFileSync(path.resolve('src/data/conversation.txt'))
 let splitted = movie_conversations.toString().split("\n");
     splitted.forEach((c) => {
       let parts = c.split(" +++$+++ ");

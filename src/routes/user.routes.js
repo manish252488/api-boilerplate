@@ -3,8 +3,7 @@
  */
 import { Router } from 'express';
 const UserController = require('../controllers/user.controller');
-import passport from 'passport'
-import validate from 'express-validation';
+import passport from '../config/AuthMiddlewares';
 import { verifyApiKey } from '../config/AuthMiddlewares';
 const routes = new Router();
 /**

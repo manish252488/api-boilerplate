@@ -1,33 +1,5 @@
 require('dotenv').config();
 
-const WHITELIST = {
-  users: {
-    create: [
-      'name',
-      'email',
-      'password',
-      'status',
-      'source',
-      'createdDate',
-      'updatedDate',
-      'lastLogin']
-  },
-  transactions: {
-    create: [
-      'fileNames',
-      'fromMailIds',
-      'mailDate',
-      'fileTypes',
-      'downloadSize',
-      'saveLocation',
-      'mailAccount',
-      'termsAcceptDate',
-      'localTimestamp',
-      'deviceDetail'
-    ]
-  }
-}
-
 const devConfig = {
   MONGO_URL: process.env.MONGO_DEV,
   JWT_SECRET: process.env.JWT_SECRET_DEV,
@@ -45,7 +17,6 @@ const prodConfig = {
 };
 const defaultConfig = {
   PORT: process.env.PORT || 3002,
-  WHITELIST,
 };
 
 
