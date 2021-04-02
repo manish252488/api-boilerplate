@@ -3,6 +3,7 @@ const UserController = require('../controllers/user.controller');
 import passport from '../config/AuthMiddlewares';
 import { verifyApiKey } from '../config/AuthMiddlewares';
 import * as ProductController from '../controllers/products.controller';
+import multer from 'multer';
 const routes = new Router();
 
 const storage = multer.diskStorage({
