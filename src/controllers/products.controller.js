@@ -1,13 +1,23 @@
+import { productValidation } from '../config/validations';
 import Product from '../models/product.model';
 
-export async function addProduct(req,res){
-    try{
-        const product = req.body;
-        const user = req.user;
-        product.user = user.id;
-        //let data = await Product.create(product);
-        return res.success('product added!', {product,req});
-    }catch(err){
+export async function addProduct(req, res) {
+    try {
+        let product = req.body;
+        await productValidation(product);
+        product.picture = req.file.filename;
+        product.user = req.user.id;
+        let data = await Product.create(product);
+        return res.success('product added !', data);
+    } catch (err) {
         return res.error("unable to add product!", err)
+    }
+}
+export async function listProducts(req, res) {
+    try {
+        let data = await Product.find();
+        return res.success('products!', data);
+    } catch (err) {
+        return res.error("unable to list products!", err)
     }
 }

@@ -1,12 +1,16 @@
 const Joi = require("joi");
-const { join } = require("lodash");
-const { resolve, reject } = require("promise");
 var Promise = require("promise");
 
-const listAnnouncement = function (body) {
+export const productValidation = function (body) {
   const schema = Joi.object()
     .keys({
-      type: Joi.string().valid("all", "specific").allow().required(),
+      name: Joi.string().required().allow(),
+      category: Joi.string().required().allow(),
+      description: Joi.string().allow(),
+      MPrice: Joi.number().required().allow(),
+      SPrice: Joi.number().required().allow(),
+      discount: Joi.number().default(0).allow(),
+      file: Joi.any().allow()
     })
     .unknown(true);
   return new Promise((resolve, reject) => {

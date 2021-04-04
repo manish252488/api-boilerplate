@@ -74,7 +74,7 @@ passport.use(
         }
         return done(null, user, { message: "user verified!" });
       } catch (err) {
-        return done(error);
+        return done(err);
       }
     }
   )

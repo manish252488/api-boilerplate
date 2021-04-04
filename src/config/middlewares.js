@@ -17,15 +17,14 @@ import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
 import chalk from 'chalk';
 import { Response } from '../models/response.model';
+import express from "express";
 const isTest = process.env.NODE_ENV === "test";
 const isDev = process.env.NODE_ENV === "development";
 
 export default (app) => {
   app.use(compression());
   app.use(cors({ origin: true, credentials: true }));
- app.use(bodyParser.urlencoded({extended:true}));
-
-app.use(bodyParser.json());
+  app.use(express.json()).use(express.urlencoded({extended:true}))
   app.use(helmet());
   app.use(cors());
   app.use(expressStatusMonitor());
