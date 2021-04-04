@@ -21,3 +21,18 @@ export async function listProducts(req, res) {
         return res.error("unable to list products!", err)
     }
 }
+
+export function updateProduct(req,res){
+    try{
+
+    }catch(err){
+        return res.error("unable to update product",err)
+    }
+}
+export function deleteProduct(req,res){
+    try{
+
+    }catch(err){
+        return res.error("unable to delete product",err)
+    }
+}

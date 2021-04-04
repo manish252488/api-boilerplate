@@ -21,5 +21,6 @@ const upload = multer({ storage: storage })
 
 routes.post("/add",[verifyApiKey,passport.authenticate('admin'), upload.single('file')],ProductController.addProduct)
 routes.get("/list",[verifyApiKey,passport.authenticate('checkJwt')],ProductController.listProducts)
-
+routes.put("/update",[verifyApiKey,passport.authenticate('checkJwt'),upload.single('file')],ProductController.updateProduct)
+routes.delete("/delete",[verifyApiKey,passport.authenticate('checkJwt')],ProductController.deleteProduct)
 export default routes;
