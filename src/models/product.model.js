@@ -59,6 +59,10 @@ const ProductSchema = new Schema(
       type: Date,
       default: new Date(),
     },
+    totalRatings: {
+      type: Number,
+      default: 1,
+    },
   },
   { timestamps: true }
 );
@@ -69,23 +73,22 @@ ProductSchema.plugin(uniqueValidator, {
 
 ProductSchema.methods = {
   toJSON() {
-    if (this.status === 1) {
-      return {
-        id: this._id,
-        name: this.name,
-        user: this.user,
-        category: this.category,
-        description: this.description,
-        stars: this.stars,
-        MPrice: this.MPrice,
-        SPrice: this.SPrice,
-        discount: this.discount,
-        picture: this.picture,
-        status: this.status,
-        createdDate: this.createdDate,
-        updatedDate: this.updatedDate,
-      };
-    }
+    return {
+      id: this._id,
+      name: this.name,
+      user: this.user,
+      category: this.category,
+      description: this.description,
+      stars: this.stars,
+      MPrice: this.MPrice,
+      SPrice: this.SPrice,
+      discount: this.discount,
+      picture: this.picture,
+      status: this.status,
+      createdDate: this.createdDate,
+      updatedDate: this.updatedDate,
+      totalRatings: this.totalRatings,
+    };
   },
 };
 const Product = mongoose.model("Products", ProductSchema);
