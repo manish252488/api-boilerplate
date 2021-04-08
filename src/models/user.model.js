@@ -1,12 +1,10 @@
-/* eslint-disable import/no-mutable-exports */
-
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import { hashSync, genSaltSync, compareSync } from "bcrypt-nodejs";
-import jwt from "jsonwebtoken";
 import uniqueValidator from "mongoose-unique-validator";
 import constants from "../config/constants";
 import * as validator from "validator";
+import jwt from "jsonwebtoken";
 const UserSchema = new Schema(
   {
     name: {
@@ -76,13 +74,12 @@ const UserSchema = new Schema(
 UserSchema.plugin(uniqueValidator, {
   message: "{VALUE} already taken!",
 });
-// Hash the user password on creation
+
 UserSchema.pre("save", async function(next) {
   if (this.password && this.isModified("password")) {
     var salt = genSaltSync(12);
     this.password = hashSync(this.password, salt);
   }
-
   next();
 });
 UserSchema.pre("updateOne", async function(next) {
@@ -94,26 +91,9 @@ UserSchema.pre("updateOne", async function(next) {
 });
 
 UserSchema.methods = {
-  async adminAuth(inputPass, correctPass) {
-    return await bcrypt.compare(inputPass, correctPass);
-  },
-
-  /**
-   * Authenticate the user
-   *
-   * @public
-   * @param {String} password - provided by the user
-   * @returns {Boolean} isMatch - password match
-   */
   authenticateUser(password) {
     return !this.password ? false : compareSync(password, this.password);
   },
-  /**
-   * Generate a jwt token for authentication
-   *
-   * @public
-   * @returns {String} token - JWT token
-   */
   createToken() {
     const token = jwt.sign(
       { email: this.email, role: this.roleId, id: this._id },
@@ -121,49 +101,18 @@ UserSchema.methods = {
     );
     return token;
   },
-  /**
-   * Parse the user object in data we wanted to send when is auth
-   *
-   * @public
-   * @returns {Object} User - ready for auth
-   */
   toAuthJSON() {
     return {
-      user: {
-        id: this._id,
-        roleId: this.roleId === 0 ? "admin" : "user",
-        name: this.name,
-        email: this.email,
-        picture: this.picture,
-        roleId:
-          this.roleId === 0 ? "guest" : this.roleId === 1 ? "user" : "admin",
-        status: this.status,
-        source: this.source || "none",
-      },
+      id: this._id,
+      roleId: this.roleId === 0 ? "admin" : "user",
+      name: this.name,
+      email: this.email,
+      picture: this.picture,
+      roleId:
+        this.roleId === 0 ? "guest" : this.roleId === 1 ? "user" : "admin",
+      status: this.status,
+      source: this.source || "none",
       token: `JWT ${this.createToken()}`,
-    };
-  },
-  /**
-   * Parse the user object in data we wanted to send
-   *
-   * @public
-   * @returns {Object} User - ready for populate
-   */
-  toObject() {
-    return {
-      user: {
-        id: this._id,
-        roleId: this.roleId === 0 ? "admin" : "user",
-        name: this.name,
-        email: this.email,
-        picture: this.picture,
-        roleId:
-          this.roleId === 0 ? "guest" : this.roleId === 1 ? "user" : "admin",
-        status: this.status,
-        source: this.source || "none",
-        password: this.password,
-
-      },
     };
   },
   toJSON() {
@@ -179,10 +128,10 @@ UserSchema.methods = {
       source: this.source || "none",
       createdDate: this.createdDate,
       updatedDate: this.updatedDate,
-      lastLogin: this.lastLogin
-      
+      lastLogin: this.lastLogin,
     };
   },
 };
+
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

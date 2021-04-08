@@ -92,7 +92,7 @@ passport.use(
         if (!user) {
           return done(null, false, { message: "user not found/registered!" });
         }
-        return done(null, user, { message: "user verified!" });
+        return done(null, user.toJSON(), { message: "user verified!" });
       } catch (err) {
         return done(error);
       }

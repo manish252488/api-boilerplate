@@ -95,7 +95,7 @@ export async function deleteUser(req, res) {
 export async function checkJwt(req,res){
     try {
     const user = req.user;
-    return res.success("user authorized", user.toObject());
+    return res.success("user authorized", user);
   } catch (err) {
     return res.error("cannot authorize user", err);
   }
