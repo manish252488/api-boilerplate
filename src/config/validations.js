@@ -63,3 +63,27 @@ export const productUpdateValidation = function(body) {
     }
   });
 };
+
+export const fetchMailQueryValidation = (body) => {
+  const schema = Joi.object()
+    .keys({
+      start_date: Joi.string()
+        .allow()
+        .required(),
+      end_date: Joi.string()
+        .allow()
+        .required(),
+      file_name: Joi.string().allow(),
+      file_size: Joi.string().allow(),
+      file_type: Joi.string().allow(),
+    })
+    .unknown(true);
+  return new Promise((resolve, reject) => {
+    const { value, error, warning } = schema.validate(body);
+    if (error) {
+      reject({ status_code: 400, message: error.details[0].message });
+    } else {
+      resolve(value);
+    }
+  });
+};

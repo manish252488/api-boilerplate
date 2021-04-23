@@ -18,7 +18,7 @@ const isTest = process.env.NODE_ENV === "test";
 routes.use("/users", UserRoutes);
 routes.use("/chat", ChatRoutes);
 routes.use("/product", ProductRoutes);
-rouets.use("/files", FilesRoutes);
+routes.use("/files", FilesRoutes);
 routes.all("*", (req, res, next) =>
   next(new APIError("Not Found!", HTTPStatus.NOT_FOUND, true))
 );
