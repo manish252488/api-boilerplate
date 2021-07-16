@@ -1,10 +1,7 @@
 
-# Attachimp
+# chat bot
 ---
 
-## Api Doc
-
-Api doc is hosted on surge. [Link](http://attachimp.surge.sh/).
 
 ---
 ### DEV
