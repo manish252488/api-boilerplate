@@ -1,15 +1,8 @@
 {
-  "name": "attachimp-api",
-  "description": "A NodeJS server boilerplate for help you kickstart you futur node project. ES6/ES7 features.",
+  "name": "chatbot-api",
+  "description": "chatbot features",
   "version": "1.0.3",
-  "author": "Emanuel Quimper <quimperemanuel@gmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/EQuimper/nodejs-api-boilerplate.git"
-  },
-  "bugs": {
-    "url": "https://github.com/EQuimper/nodejs-api-boilerplate/issues"
-  },
+  "author": "Manish25.mansih2488@gmail.com",
   "engines": {
     "node": ">= 6.10",
     "npm": ">= 3.10",
