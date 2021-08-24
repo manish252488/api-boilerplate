@@ -92,8 +92,17 @@ export async function deleteUser(req, res) {
     return res.error("cannot deactivate user", err);
   }
 }
-export async function checkJwt(req,res){
-    try {
+export async function setProfilePicture(req, res) {
+  try {
+    const user = req.user;
+    await User.findByIdAndUpdate(user.id, { picture: req.file.filename });
+    return res.success("profile picture updated");
+  } catch (err) {
+    return res.error("cannot upload profile picture!", err);
+  }
+}
+export async function checkJwt(req, res) {
+  try {
     const user = req.user;
     return res.success("user authorized", user);
   } catch (err) {

@@ -1,10 +1,12 @@
 /**
  * User Routes
  */
-import { Router } from 'express';
-const UserController = require('../controllers/user.controller');
-import passport from '../config/AuthMiddlewares';
-import { verifyApiKey } from '../config/AuthMiddlewares';
+import { Router } from "express";
+const UserController = require("../controllers/user.controller");
+import passport from "../config/AuthMiddlewares";
+import { verifyApiKey } from "../config/AuthMiddlewares";
+import multer from "multer";
+import path from "path";
 const routes = new Router();
 /**
  * @api {get} /users/:id Details of a user
@@ -39,22 +41,61 @@ const routes = new Router();
  *                       "source": "none",
  *                       "lastLogin": "2017-07-04T07:53:55.000Z",
  *                       "createdDate": "2017-07-04T07:53:55.000Z"
- *                  }             
+ *                  }
  *  }
  *
  * HTTP/1.1 200 OK
- * 
+ *
  * @apiErrorExample {json} Post not found
  *    HTTP/1.1 404 Not Found
  * @apiErrorExample {json} Unauthorized
  *    HTTP/1.1 401 Unauthorized
- * 
+ *
  */
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, path.resolve("src/data/uploads"));
+  },
+  filename: function(req, file, cb) {
+    const newFile = `${file.fieldname}-${Date.now()}-${file.originalname}`;
+    cb(null, newFile);
+  },
+});
+const upload = multer({ storage: storage });
 
-routes.post('/create',[verifyApiKey],UserController.create)
-routes.post('/login',[verifyApiKey,passport.authenticate('login')], UserController.login)
-routes.get('/list', [verifyApiKey, passport.authenticate('admin',{session: false})], UserController.listUsers)
-routes.put('/update',[verifyApiKey,passport.authenticate('checkJwt',{session:false})], UserController.updateUser)
-routes.delete('/delete',[verifyApiKey, passport.authenticate('checkJwt',{session:false})], UserController.deleteUser)
-routes.get('/check',[verifyApiKey, passport.authenticate('checkJwt',{session:false})], UserController.checkJwt)
+routes.post("/create", [verifyApiKey], UserController.create);
+routes.post(
+  "/login",
+  [verifyApiKey, passport.authenticate("login")],
+  UserController.login
+);
+routes.get(
+  "/list",
+  [verifyApiKey, passport.authenticate("admin", { session: false })],
+  UserController.listUsers
+);
+routes.put(
+  "/update",
+  [verifyApiKey, passport.authenticate("checkJwt", { session: false })],
+  UserController.updateUser
+);
+routes.delete(
+  "/delete",
+  [verifyApiKey, passport.authenticate("checkJwt", { session: false })],
+  UserController.deleteUser
+);
+routes.get(
+  "/check",
+  [verifyApiKey, passport.authenticate("checkJwt", { session: false })],
+  UserController.checkJwt
+);
+routes.get(
+  "/upload-profile-picture",
+  [
+    verifyApiKey,
+    passport.authenticate("checkJwt", { session: false }),
+    upload.single("file"),
+  ],
+  UserController.setProfilePicture
+);
 export default routes;

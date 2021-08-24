@@ -1,5 +1,4 @@
 import { Router } from "express";
-const UserController = require("../controllers/user.controller");
 import passport from "../config/AuthMiddlewares";
 import { verifyApiKey } from "../config/AuthMiddlewares";
 import * as ProductController from "../controllers/products.controller";
