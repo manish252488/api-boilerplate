@@ -92,7 +92,7 @@
   "dependencies": {
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "@sentry/node": "^5.27.5",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "babel-preset-react": "^6.24.1",
     "bcrypt-nodejs": "^0.0.3",
     "bcryptjs": "^2.4.3",
